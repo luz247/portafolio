@@ -1,0 +1,203 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { projects } from "../../data/projects.js";
+
+// categorías visibles
+const categories = [
+  { key: "all", label: "Todos" },
+  { key: "backend", label: "Backend" },
+  { key: "frontend", label: "Frontend" },
+  { key: "fullstack", label: "Full Stack" },
+  { key: "landing", label: "Landing" },
+  { key: "portfolio", label: "Portafolio" },
+  { key: "automation", label: "Automatización" },
+];
+
+// leer categoría desde la URL
+const selected = Astro.url.searchParams.get("cat") ?? "all";
+
+console.log(selected,'esto es el selected')
+
+// soporta category (string) y categories (array)
+function getCategories(p:any) {
+  if (Array.isArray(p.categories)) return p.categories;
+  if (typeof p.category === "string") return [p.category];
+  return [];
+}
+
+// filtrar
+const filtered =
+  selected === "all"
+    ? projects
+    : projects.filter((p) => getCategories(p).includes(selected));
+---
+
+
+<MainLayout title="Proyectos | Luz Marivel">
+  <main class="mx-auto max-w-6xl px-6 py-12">
+<a
+      href="/#home"
+      class="inline-flex items-center gap-2 text-white/70 hover:text-white transition"
+    >
+      ← Volver al Home
+    </a>
+    <div class="text-center">
+      <!-- Volver al Home -->
+    
+
+    <h1 class="mt-6 text-4xl font-bold text-amber-50">Proyectos</h1>
+    <p class="mt-2 text-white/70">
+      Todos mis proyectos, con detalle e imágenes.
+    </p>
+    </div>
+
+    <!-- Filtros -->
+<div class="mt-8 flex flex-wrap gap-2 justify-center" id="filters">
+  {categories.map((c) => (
+    <a
+      href={c.key === "all" ? "/projects" : `/projects?cat=${c.key}`}
+      data-cat={c.key}
+      class={`filter-btn px-3 py-1.5 rounded-full border text-sm transition
+        ${selected === c.key
+          ? "bg-orange-500/20 border-orange-400/40 text-orange-200"
+          : "bg-white/5 border-white/10 text-white/80 hover:bg-white/10"}`}
+    >
+      {c.label}
+    </a>
+  ))}
+</div>
+
+
+    <!-- Contador -->
+    <p class="mt-4 text-white/60 text-sm" id="counter">
+  Mostrando <span class="text-white">{filtered.length}</span> proyecto(s)
+  {selected !== "all" ? (
+    <span>
+      {" "}en{" "}
+      <span class="text-orange-200 font-semibold">{selected}</span>
+    </span>
+  ) : null}
+</p>
+
+
+    <!-- Grid -->
+    <div class="mt-8 grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+      {filtered.map((p) => (
+        <article class="project-card rounded-2xl bg-white/5 border border-white/10 overflow-hidden hover:bg-white/10 transition"
+  data-cats={JSON.stringify(getCategories(p))} >
+          <div class="aspect-16/10 bg-black/20">
+            <img
+              src={p.cover}
+              alt={p.title}
+              class="w-full h-full object-cover"
+            />
+          </div>
+
+          <div class="p-6">
+            <h2 class="text-xl font-semibold text-amber-50">
+              {p.title}
+            </h2>
+
+            <p class="mt-3 text-sm text-white/75 leading-relaxed">
+              {p.shortDesc}
+            </p>
+
+            <div class="mt-4 flex flex-wrap gap-2">
+              {(p.tags ?? []).map((t) => (
+                <span class="text-xs px-2.5 py-1 rounded-full bg-black/20 border border-white/10 text-white/80">
+                  {t}
+                </span>
+              ))}
+            </div>
+
+            <a
+              class="inline-flex mt-6 text-orange-300 hover:text-orange-200 transition"
+              href={`/projects/${p.slug}`}
+            >
+              Ver detalle →
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <!-- Sin resultados -->
+    {filtered.length === 0 ? (
+      <div class="mt-10 rounded-2xl border border-white/10 bg-white/5 p-6 text-white/70">
+        No hay proyectos en esta categoría todavía.
+      </div>
+    ) : null}
+
+  </main>
+</MainLayout>
+
+<script is:inline define:vars={{ selected }}>
+  const buttons = Array.from(document.querySelectorAll(".filter-btn"));
+  const cards = Array.from(document.querySelectorAll(".project-card"));
+  const counter = document.getElementById("counter");
+
+  function setActive(cat) {
+    buttons.forEach((btn) => {
+      const isActive = btn.dataset.cat === cat;
+      btn.classList.toggle("bg-orange-500/20", isActive);
+      btn.classList.toggle("border-orange-400/40", isActive);
+      btn.classList.toggle("text-orange-200", isActive);
+
+      btn.classList.toggle("bg-white/5", !isActive);
+      btn.classList.toggle("border-white/10", !isActive);
+      btn.classList.toggle("text-white/80", !isActive);
+    });
+  }
+
+  function applyFilter(cat) {
+    let visible = 0;
+
+    cards.forEach((card) => {
+      const cats = JSON.parse(card.dataset.cats || "[]");
+      const show = cat === "all" || cats.includes(cat);
+
+      card.classList.toggle("hidden", !show);
+      if (show) visible++;
+    });
+
+    if (counter) {
+      counter.innerHTML =
+        `Mostrando <span class="text-white">${visible}</span> proyecto(s)` +
+        (cat !== "all"
+          ? ` en <span class="text-orange-200 font-semibold">${cat}</span>`
+          : "");
+    }
+  }
+
+  function updateUrl(cat) {
+    const url = new URL(window.location.href);
+    if (cat === "all") url.searchParams.delete("cat");
+    else url.searchParams.set("cat", cat);
+    window.history.pushState({}, "", url);
+  }
+
+  function run(cat) {
+    setActive(cat);
+    applyFilter(cat);
+    updateUrl(cat);
+  }
+
+  // click sin recarga
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      run(btn.dataset.cat || "all");
+    });
+  });
+
+  // soportar back/forward del navegador
+  window.addEventListener("popstate", () => {
+    const url = new URL(window.location.href);
+    const cat = url.searchParams.get("cat") ?? "all";
+    setActive(cat);
+    applyFilter(cat);
+  });
+
+  // init con el valor SSR (selected)
+  run(selected);
+</script>

@@ -1,0 +1,17 @@
+---
+import '../styles/global.css'
+const { title = "Portafolio | Luz Marivel" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+  </head>
+
+  <body class="min-h-screen w-full bg-[linear-gradient(to_right,#0f2027,#203A43,#2C5364)] text-white">
+    <slot />
+  </body>
+</html>

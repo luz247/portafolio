@@ -1,0 +1,27 @@
+---
+const links = [
+  { href: "/#home", label: "Home" },
+  { href: "/#about", label: "About" },
+  { href: "/#projects", label: "Proyectos" },
+  { href: "/#contact", label: "Contacto" },
+];
+---
+
+<header class="sticky top-0 z-50 backdrop-blur bg-black/20 border-b border-white/10">
+  <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
+    <a href="/#home" class="font-bold tracking-tight text-amber-50">Luz Marivel</a>
+
+    <nav class="hidden md:flex gap-6 text-sm text-white/80">
+      {links.map((l) => (
+        <a class="hover:text-white transition" href={l.href}>{l.label}</a>
+      ))}
+    </nav>
+
+    <a
+      href="/#contact"
+      class="text-sm px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 transition"
+    >
+      Hablemos
+    </a>
+  </div>
+</header>

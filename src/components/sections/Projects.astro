@@ -1,0 +1,101 @@
+---
+const projects = [
+  {
+    title: "CRM de Call Center",
+    desc: "Gestión de llamadas, agenda, reportes y automatización.",
+    tags: ["React", "Django", "SQL Server"],
+    link: "/projects/crm-call-center-v0",
+  },
+  {
+    title: "Automatización WhatsApp",
+    desc: "Flujos con Webhooks, integraciones y respuestas automáticas.",
+    tags: ["Node.js", "n8n", "WhatsApp API"],
+    link: "/projects/automatizacion-whatsapp",
+  },
+  {
+    title: "Pipelines SFTP / NAS",
+    desc: "Validación y transferencia de archivos con reportes.",
+    tags: ["Python", "SFTP", "ETL"],
+    link: "/projects/pipelines-sftp-nas",
+  },
+];
+---
+
+<section id="projects" class="max-w-6xl
+      mx-auto px-6 py-16">
+  <div class="flex
+      items-end justify-between gap-6">
+    <div>
+      <h2 class="text-3xl font-bold text-amber-50">Proyectos</h2>
+      <p class="mt-2
+          text-white/70">Algunos trabajos destacados.</p>
+    </div>
+  </div>
+
+  <div class="grid
+      mt-8
+      gap-6
+      md:grid-cols-3">
+    {
+      projects.map((p) => (
+        <article
+          class="
+          p-6
+          bg-white/5
+          rounded-2xl border border-white/10
+          hover:bg-white/10 transition
+        "
+        >
+          <h3
+            class="
+            text-xl font-semibold
+          "
+          >
+            {p.title}
+          </h3>
+          <p
+            class="
+            mt-3
+            text-white/75 text-sm leading-relaxed
+          "
+          >
+            {p.desc}
+          </p>
+
+          <div
+            class="
+            flex flex-wrap
+            mt-4
+            gap-2
+          "
+          >
+            {p.tags.map((t) => (
+              <span
+                class="
+                px-2.5 py-1
+                text-xs
+                bg-black/20
+                rounded-full border border-white/10
+              "
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+
+          <a
+            class="
+            inline-flex
+            mt-6
+            text-orange-300
+            hover:text-orange-200 transition
+          "
+            href={p.link}
+          >
+            Ver más →
+          </a>
+        </article>
+      ))
+    }
+  </div>
+</section>

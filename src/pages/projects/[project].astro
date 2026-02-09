@@ -1,0 +1,288 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import Navbar from "../../components/Navbar.astro";
+import { projects } from "../../data/projects.js";
+
+export function getStaticPaths() {
+  return projects.map((p) => ({
+    params: { project: p.slug },
+    props: { project: p },
+  }));
+}
+
+const { project } = Astro.props;
+---
+
+<MainLayout title={`${project.title} | Proyectos`}>
+
+  <main class="mx-auto max-w-6xl px-6 py-12">
+    <a href="/projects" class="text-white/70 hover:text-white transition">
+      ← Volver a proyectos
+    </a>
+
+    <div
+      class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-start"
+    >
+      <!-- Cover -->
+      <div
+        class="rounded-2xl overflow-hidden border border-white/10 bg-black/20"
+      >
+        <div class="aspect-16/10 md:aspect-auto">
+          <img
+            src={project.cover}
+            alt={project.title}
+            class="w-full h-full object-cover"
+          />
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div>
+        <h1
+          class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-amber-50"
+        >
+          {project.title}
+        </h1>
+
+        <p class="mt-3 text-white/80 leading-relaxed">{project.description}</p>
+
+        <div class="mt-5 flex flex-wrap gap-2">
+          {
+            project.tags.map((t) => (
+              <span class="text-xs px-2.5 py-1 rounded-full bg-white/10 border border-white/10">
+                {t}
+              </span>
+            ))
+          }
+        </div>
+
+        <div class="mt-8 flex flex-col sm:flex-row gap-3">
+          {
+            project.links?.demo ? (
+              <a
+                class="px-5 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 transition font-semibold"
+                href={project.links.demo}
+                target="_blank"
+              >
+                Ver demo
+              </a>
+            ) : null
+          }
+
+          {
+            project.links?.github ? (
+              <a
+                class="px-5 py-2 rounded-lg border border-white/30 hover:bg-white/10 transition"
+                href={project.links.github}
+                target="_blank"
+              >
+                GitHub
+              </a>
+            ) : null
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Galería -->
+    {
+      project.gallery?.length ? (
+        <section class="mt-12">
+          <h2 class="text-2xl font-bold text-amber-50">Galería</h2>
+
+          <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {project.gallery.map((img, idx) => (
+              <button
+                type="button"
+                class="group rounded-2xl overflow-hidden border border-white/10 bg-black/20 aspect-[16/10] relative"
+                data-thumb
+                data-idx={idx}
+                aria-label={`Abrir imagen ${idx + 1} de ${project.title}`}
+              >
+                <img
+                  src={img}
+                  alt={`Imagen ${project.title}`}
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span class="px-3 py-1 rounded-lg bg-orange-500 text-white text-sm font-semibold">
+                    Ver en grande
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : null
+    }
+
+    <!-- LIGHTBOX / MODAL FULLSCREEN -->
+    <div id="lightbox" class="fixed inset-0 z-[9999] hidden" aria-hidden="true">
+      <!-- fondo -->
+      <div id="lbBackdrop" class="absolute inset-0 bg-black/80 z-0"></div>
+
+      <!-- contenido -->
+      <div
+        class="relative h-full w-full flex items-center justify-center p-4 select-none z-10"
+      >
+        <!-- cerrar -->
+        <button
+          id="lbClose"
+          class=" absolute top-3 right-3 sm:top-4 sm:right-4 z-20
+         w-9 h-9 sm:w-11 sm:h-11
+         rounded-full bg-black/50 hover:bg-black/70
+         text-white flex items-center justify-center transition
+         border border-white/10 backdrop-blur-sm
+         text-lg sm:text-xl leading-none"
+          aria-label="Cerrar"
+        >
+          ✕
+        </button>
+
+        <!-- prev -->
+        <button
+          id="lbPrev"
+          class="hidden absolute z-20 left-2 sm:left-4 md:left-4 top-1/2 -translate-y-1/2
+         w-12 h-12 rounded-full bg-black/50 hover:bg-black/70
+         text-white md:flex items-center justify-center transition
+         border border-white/10 active:scale-95"
+          aria-label="Anterior"
+        >
+          <span class="text-3xl leading-none -mt-1">‹</span>
+        </button>
+
+        <!-- next -->
+        <button
+          id="lbNext"
+          class="hidden absolute z-20 right-2 sm:right-4 md:right-4 top-1/2 -translate-y-1/2
+         w-12 h-12 rounded-full bg-black/50 hover:bg-black/70
+         text-white md:flex items-center justify-center transition
+         border border-white/10 active:scale-95"
+          aria-label="Siguiente"
+        >
+          <span class="text-3xl leading-none -mt-1">›</span>
+        </button>
+
+        <!-- imagen -->
+        <figure class="relative z-10 max-w-6xl w-full pointer-events-none">
+          <img
+            id="lbImg"
+            src=""
+            alt="Imagen ampliada"
+            class="w-full max-h-[70vh] sm:max-h-[80vh] lg:max-h-[85vh]
+         object-contain rounded-2xl border border-white/10 bg-black/20
+         touch-none pointer-events-auto"
+          />
+
+          <!-- contador -->
+          <figcaption
+            class="mt-3 text-center text-white/70 text-sm pointer-events-auto"
+          >
+            <span id="lbCounter">1 / 1</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </main>
+</MainLayout>
+
+<script is:inline define:vars={{ gallery: project.gallery ?? [] }}>
+  const lightbox = document.getElementById("lightbox");
+  const backdrop = document.getElementById("lbBackdrop");
+  const lbImg = document.getElementById("lbImg");
+  const lbCounter = document.getElementById("lbCounter");
+
+  const btnClose = document.getElementById("lbClose");
+  const btnPrev = document.getElementById("lbPrev");
+  const btnNext = document.getElementById("lbNext");
+
+  let current = 0;
+
+  function update() {
+    lbImg.style.opacity = "0";
+    setTimeout(() => {
+      lbImg.src = gallery[current];
+      lbCounter.textContent = `${current + 1} / ${gallery.length}`;
+      lbImg.style.opacity = "1";
+    }, 120);
+  }
+
+  function openAt(index) {
+    if (!gallery.length) return;
+    current = index;
+    lightbox.classList.remove("hidden");
+    lightbox.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    update();
+  }
+
+  function close() {
+    lightbox.classList.add("hidden");
+    lightbox.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  function prev() {
+    current = (current - 1 + gallery.length) % gallery.length;
+    update();
+  }
+
+  function next() {
+    current = (current + 1) % gallery.length;
+    update();
+  }
+
+  // abrir al click en thumbnails
+  document.querySelectorAll("[data-thumb]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idx = Number(btn.getAttribute("data-idx") || "0");
+      openAt(idx);
+    });
+  });
+
+  // botones
+  btnClose.addEventListener("click", close);
+  btnPrev.addEventListener("click", prev);
+  btnNext.addEventListener("click", next);
+
+  // cerrar SOLO al tocar el fondo
+  backdrop.addEventListener("click", close);
+
+  // teclado
+  document.addEventListener("keydown", (e) => {
+    if (lightbox.classList.contains("hidden")) return;
+    if (e.key === "Escape") close();
+    if (e.key === "ArrowLeft") prev();
+    if (e.key === "ArrowRight") next();
+  });
+
+  // ===== SWIPE (mobile) =====
+  let startX = 0;
+  let startY = 0;
+
+  function onTouchStart(e) {
+    if (lightbox.classList.contains("hidden")) return;
+    const t = e.touches[0];
+    startX = t.clientX;
+    startY = t.clientY;
+  }
+
+  function onTouchEnd(e) {
+    if (lightbox.classList.contains("hidden")) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
+
+    // si fue más vertical que horizontal, ignorar
+    if (Math.abs(dy) > Math.abs(dx)) return;
+
+    const TH = 50; // umbral
+    if (dx > TH) prev();
+    if (dx < -TH) next();
+  }
+
+  // Swipe sobre todo el lightbox
+  lightbox.addEventListener("touchstart", onTouchStart, { passive: true });
+  lightbox.addEventListener("touchend", onTouchEnd, { passive: true });
+</script>

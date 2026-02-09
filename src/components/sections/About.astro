@@ -1,0 +1,24 @@
+<section id="about" class="mx-auto max-w-6xl px-6 py-16">
+  <div class="bg-white/5 border border-white/10 rounded-2xl p-8 md:p-10">
+    <h2 class="text-3xl font-bold text-amber-50">About</h2>
+
+    <p class="mt-4 text-white/80 leading-relaxed">
+      Soy desarrolladora enfocada en construir soluciones web completas:
+      frontend moderno, APIs REST y bases de datos. Me interesa la automatización
+      de procesos y la creación de productos escalables.
+    </p>
+
+    <div class="mt-6 grid md:grid-cols-3 gap-4">
+      {[
+        { t: "Frontend", d: "React, Tailwind, UI moderna" },
+        { t: "Backend", d: "Django / Node, APIs REST" },
+        { t: "Datos", d: "SQL Server, ETL, optimización" },
+      ].map((c) => (
+        <div class="rounded-xl bg-black/20 border border-white/10 p-5">
+          <p class="font-semibold">{c.t}</p>
+          <p class="text-sm text-white/70 mt-2">{c.d}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
