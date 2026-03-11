@@ -1,7 +1,7 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
 import Navbar from "../../components/Navbar.astro";
-import { projects } from "../../data/projects.js";
+import { projects } from "../../data/projects";
 
 export function getStaticPaths() {
   return projects.map((p) => ({
@@ -55,32 +55,35 @@ const { project } = Astro.props;
             ))
           }
         </div>
-
         <div class="mt-8 flex flex-col sm:flex-row gap-3">
-          {
-            project.links?.demo ? (
-              <a
-                class="px-5 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 transition font-semibold"
-                href={project.links.demo}
-                target="_blank"
-              >
-                Ver demo
-              </a>
-            ) : null
-          }
+  {
+    project.links?.demo && (
+      <a
+        class="px-5 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 transition font-semibold text-center"
+        href={project.links.demo}
+        target="_blank"
+      >
+        Ver demo
+      </a>
+    )
+  }
 
-          {
-            project.links?.github ? (
-              <a
-                class="px-5 py-2 rounded-lg border border-white/30 hover:bg-white/10 transition"
-                href={project.links.github}
-                target="_blank"
-              >
-                GitHub
-              </a>
-            ) : null
-          }
-        </div>
+  {
+    project.links?.github && (
+      <a
+        class={`px-5 py-2 rounded-lg transition text-center ${
+          !project.links?.demo 
+            ? "bg-orange-500 hover:bg-orange-600 font-semibold" 
+            : "border border-white/30 hover:bg-white/10"
+        }`}
+        href={project.links.github}
+        target="_blank"
+      >
+        GitHub
+      </a>
+    )
+  }
+</div>
       </div>
     </div>
 
