@@ -172,8 +172,8 @@ export const projects: Project[] = [
     cover: '/images/projects/portafolios/p-01.png',
     gallery: [],
     links: {
-      demo: 'https://tu-dominio-final.com', // El link actual de tu portafolio
-      github: 'https://github.com/tu-usuario/mi-portafolio',
+      demo: 'https://portafolio-luz-v0.netlify.app/', // El link actual de tu portafolio
+      github: 'https://github.com/luz247/portafolio.git',
     },
     categories: ['frontend', 'fullstack'],
   },
