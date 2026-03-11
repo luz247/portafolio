@@ -168,12 +168,9 @@ export const projects: Project[] = [
     shortDesc: 'Plataforma profesional donde gestiono y expongo mi ecosistema de proyectos.',
     description:
       'Mi hub central de desarrollo. Una aplicación diseñada para la máxima velocidad y SEO, donde integro mis trabajos de Backend (Django/SQL Server) y Frontend (Angular/Next.js). El código es modular, escalable y sirve como muestra de mis estándares de arquitectura limpia.',
-    tags: ['Astro', 'TypeScript', 'Tailwind CSS','Portfolio'],
-    cover: '/images/projects/portfolio/main-cover.png',
-    gallery: [
-      '/images/projects/portfolio/mobile-view.png',
-      '/images/projects/portfolio/projects-grid.png',
-    ],
+    tags: ['Astro', 'TypeScript', 'Tailwind CSS', 'Portfolio'],
+    cover: '/images/projects/portafolios/p-01.png',
+    gallery: [],
     links: {
       demo: 'https://tu-dominio-final.com', // El link actual de tu portafolio
       github: 'https://github.com/tu-usuario/mi-portafolio',
